@@ -2,7 +2,6 @@
 #define __BUFFER_H
 
 #include <stdlib.h>
-#include <stddef.h>
 
 #define BUFFER_MAX_PREALLOC (1024*1024)
 #define BUFFER_DEFAULT_SIZE 2048

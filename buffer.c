@@ -1,10 +1,8 @@
 #include <string.h>
-#include <stdint.h>
 #include "buffer.h"
 
 buffer_t *buffer_new(size_t len) {
     buffer_t *buf = (buffer_t *)malloc(sizeof(buffer_t));
-
     if (NULL == buf) {
         return NULL;
     }
