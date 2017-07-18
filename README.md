@@ -21,4 +21,4 @@ append `data` to `buf`
 create a new buffer from `buf` with slice
 
 ### buffer_t *buffer_reset(buffer_t *buf)
-reset the `buf->used` to `0` and free `buf->data`
+reset the `buf->len`&`buf->size` to `0` and free `buf->data`
