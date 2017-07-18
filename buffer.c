@@ -1,18 +1,23 @@
 #include <string.h>
 #include "buffer.h"
 
-buffer_t *buffer_new(size_t len) {
+buffer_t *buffer_new(size_t size) {
     buffer_t *buf = (buffer_t *)malloc(sizeof(buffer_t));
     if (NULL == buf) {
         return NULL;
     }
 
-    buf->capacity = len;
-    buf->used = 0;
-    buf->data = (char *)malloc(len);
-    if (NULL == buf->data) {
-        free(buf);
-        return NULL;
+    buf->size = size;
+    buf->len = 0;
+    buf->data = NULL;
+
+    if (size > 0) {
+        buf->data = (char *)malloc(size);
+
+        if (NULL == buf->data) {
+            free(buf);
+            return NULL;
+        }
     }
 
     return buf;
@@ -23,31 +28,34 @@ void buffer_free(buffer_t *buf) {
     free(buf);
 }
 
-static buffer_t *buffer_trymakeroom(buffer_t *buf, size_t addlen) {
-    size_t free = buf->capacity - buf->used;
+size_t buffer_len(buffer_t *buf) {
+    return buf->len;
+}
 
-    if (free >= addlen) {
+size_t buffer_size(buffer_t *buf) {
+    return buf->size;
+}
+
+static buffer_t *buffer_trymakeroom(buffer_t *buf, size_t addsize) {
+    size_t newsize = buffer_len(buf) + addsize;
+    if (buffer_size(buf) >= newsize) {
         return buf;
     }
 
-    size_t newcapacity = buf->used + addlen;
-    if (newcapacity < BUFFER_MAX_PREALLOC) {
-        newcapacity *= 2;
+    if (newsize < BUFFER_MAX_PREALLOC) {
+        newsize *= 2;
     } else {
-        newcapacity += BUFFER_MAX_PREALLOC;
+        newsize += BUFFER_MAX_PREALLOC;
     }
 
-    buf->data = (char *)realloc(buf->data, newcapacity);
-    if (NULL == buf->data) {
+    char *data = (char *)realloc(buf->data, newsize);
+    if (NULL == data) {
         return NULL;
     }
-    buf->capacity = newcapacity;
 
-    return buf;
-}
+    buf->data = data;
+    buf->size = newsize;
 
-buffer_t *buffer_reset(buffer_t *buf) {
-    buf->used = 0;
     return buf;
 }
 
@@ -57,8 +65,27 @@ buffer_t *buffer_concat(buffer_t *buf, const char *data, size_t len) {
         return NULL;
     }
 
-    memcpy(buf->data + buf->used, data, len);
-    buf->used += len;
+    memcpy(buf->data + buf->len, data, len);
+    buf->len += len;
 
+    return buf;
+}
+
+buffer_t *buffer_slice(buffer_t *src, size_t start, size_t end) {
+    size_t size = end - start;
+
+    buffer_t *buf = buffer_new(size);
+    if (NULL == buf) {
+        return NULL;
+    }
+
+    return buffer_concat(buf, src->data + start, size);
+}
+
+buffer_t *buffer_reset(buffer_t *buf) {
+    free(buf->data);
+    buf->data = NULL;
+    buf->size = 0;
+    buf->len = 0;
     return buf;
 }
