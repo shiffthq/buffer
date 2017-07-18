@@ -87,6 +87,8 @@ int main() {
 
     MU_RUN_TEST(buffer_slice_test);
 
+    MU_RUN_TEST(buffer_reset_test);
+
     MU_REPORT();
 
     return 0;
