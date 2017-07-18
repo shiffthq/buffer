@@ -8,8 +8,17 @@ create a buffer with default `size`.
 ### void buffer_free(buffer_t *buf)
 release memory used by `buf`
 
-### buffer_t *buffer_reset(buffer_t *buf)
-reset the `buf->used` to `0`
+### size_t buffer_len(buffer_t *buf)
+get length of `buf`
+
+### size_t buffer_size(buffer_t *buf);
+get capacity of `buf`
 
 ### buffer_t *buffer_concat(buffer_t *buf, const char *data, size_t len)
-append `data` to buffer
+append `data` to `buf`
+
+### buffer_t *buffer_slice(buffer_t *buf, size_t start, size_t end)
+create a new buffer from `buf` with slice
+
+### buffer_t *buffer_reset(buffer_t *buf)
+reset the `buf->used` to `0` and free `buf->data`
