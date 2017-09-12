@@ -1,4 +1,6 @@
 ## buffer
+[![Build Status](https://travis-ci.org/shiffthq/buffer.svg?branch=master)](https://travis-ci.org/shiffthq/buffer)
+
 A buffer in C.
 
 ## APIs
